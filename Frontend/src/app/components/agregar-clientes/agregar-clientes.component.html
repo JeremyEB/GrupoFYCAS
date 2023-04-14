@@ -1,0 +1,45 @@
+<app-header2></app-header2>
+<br>
+<div class="container-body">
+    <div class="container-acciones">
+        <h3>Buscar Clientes</h3>
+        <input type="text" class="form-control" placeholder="Ingresar Cedula" [formControl]="control" maxlength="13">
+        <br>
+        <table class="table table-hover table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>ID Cliente</th>
+                    <th>Nombre y Apellido</th>
+                    <th>Telefono</th>
+                    <th>Cedula</th>
+                    <th>Seleccionar</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let element of clientes">
+                    <td>{{element.ID_CLIENTE}}</td>
+                    <td>{{element.NOMBRE_APELLIDO}}</td>
+                    <td>{{element.TELEFONO}}</td>
+                    <td>{{element.CEDULA}}</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary" (click)="onSetData(element)">Seleccionar</button>
+                        <button type="button" class="btn btn-warning" (click)="onUpdateClientes(c_clientes)">Modificar</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="container-agregar">
+        <h3>Agregando Cliente</h3>
+        <label>Nombre y Apellido:</label>
+        <input type="text" placeholder="Nombre y Apellido" class="form-control" [(ngModel)]="c_clientes.NOMBRE_APELLIDO">
+        <label>Telefono:</label>
+        <input type="tel" placeholder="Telefono(xxx-xxx-xxxx)" class="form-control" maxlength="12" [(ngModel)]="c_clientes.TELEFONO">
+        <label>Cedula:</label>
+        <input type="text" placeholder="Cedula(xxx-xxxxxxx-x)" class="form-control" maxlength="13" [(ngModel)]="c_clientes.CEDULA">
+        <br>
+        <button type="submit" class="btn btn-outline-success" (click)="onAddClientes(c_clientes)">Agregar Cliente</button>
+    </div>
+</div>
+<app-footer></app-footer>
