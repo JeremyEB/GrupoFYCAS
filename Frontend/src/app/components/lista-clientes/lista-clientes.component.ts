@@ -18,6 +18,9 @@ export class ListaClientesComponent implements OnInit {
   h_facturas: HistorialFacturas = new HistorialFacturas();
   u_facturas: Facturas = new Facturas();
   control = new FormControl();
+  resultado = 0;
+  cantidadone = 0;
+  cantidadtwo = this.c_facturas.MONTO_SOLICITADO;
   public clientes: Array<any> = []
   public facturas: Array<any> = []
   public historial: Array<any> = []
@@ -72,6 +75,7 @@ export class ListaClientesComponent implements OnInit {
       this.c_facturas.CEDULA = select.CEDULA;
     }
 
+    /*Limpieza */
     clear(){
       this.c_facturas.MONTO_SOLICITADO = 0;
       this.c_facturas.TASA = 0;
@@ -85,6 +89,36 @@ export class ListaClientesComponent implements OnInit {
       this.c_facturas.CEDULA = "";
     }
 
+    clearMontoPagar(){
+      this.h_facturas.FACTURA_ID = 0;
+      this.h_facturas.CLIENTE_ID = 0;
+      this.h_facturas.NOMBRE_APELLIDO = "";
+      this.h_facturas.TELEFONO = "";
+      this.h_facturas.CEDULA = "";
+      this.h_facturas.MONTO_SOLICITADO = 0;
+      this.h_facturas.PAGO_REALIZADO = 0;
+      this.h_facturas.TASA = 0;
+      this.h_facturas.CUOTAS = 0;
+      this.h_facturas.CUOTAS_MENSUALES = 0;
+      this.h_facturas.CAPITAL = 0;
+      this.h_facturas.INTERES = 0;
+      this.h_facturas.FECHA  = new Date;
+      //Actualizando factura
+      this.u_facturas.ID_FACTURAS = this.h_facturas.FACTURA_ID;
+      this.u_facturas.CLIENTE_ID = this.h_facturas.CLIENTE_ID;
+      this.u_facturas.NOMBRE_APELLIDO = this.h_facturas.NOMBRE_APELLIDO;
+      this.u_facturas.TELEFONO = this.h_facturas.TELEFONO;
+      this.u_facturas.CEDULA = this.h_facturas.CEDULA;
+      this.u_facturas.MONTO_SOLICITADO = this.h_facturas.MONTO_SOLICITADO;
+      this.u_facturas.PAGO_REALIZADO = this.h_facturas.PAGO_REALIZADO;
+      this.u_facturas.TASA = this.h_facturas.TASA;
+      this.u_facturas.CUOTAS = this.h_facturas.CUOTAS;
+      this.u_facturas.CUOTAS_MENSUALES = this.h_facturas.CUOTAS_MENSUALES;
+      this.u_facturas.CAPITAL = this.h_facturas.CAPITAL;
+      this.u_facturas.INTERES = this.h_facturas.INTERES;
+      this.u_facturas.FECHA = this.h_facturas.FECHA;
+    }
+
     calculos(){
       this.c_facturas.CUOTAS_MENSUALES = (this.c_facturas.MONTO_SOLICITADO * this.c_facturas.TASA / this.c_facturas.CUOTAS);
       this.c_facturas.CAPITAL = (this.c_facturas.MONTO_SOLICITADO / this.c_facturas.CUOTAS);
@@ -94,6 +128,7 @@ export class ListaClientesComponent implements OnInit {
     //Modal Perfil
     openFullscreen(content){
       this.modal.open(content, {fullscreen: true});
+      this.h_facturas.PAGO_NUEVO = 0
     }
 
     //Facturas
@@ -158,7 +193,7 @@ export class ListaClientesComponent implements OnInit {
       this.apiService.agregandoHistorialFactura(h_facturas).subscribe(res=>{
         if(res){
           alert("Factura agregada")
-          this.clear();
+          this.clearMontoPagar();
         } else{
           alert("Error")
         }
@@ -169,6 +204,7 @@ export class ListaClientesComponent implements OnInit {
       this.apiService.actualizandoFacturas(u_facturas.ID_FACTURAS,u_facturas).subscribe(res=>{
         if(res){
           alert("Actualizando Facturas");
+          this.clearMontoPagar();
         } else {
           alert("Error")
         }
@@ -176,8 +212,49 @@ export class ListaClientesComponent implements OnInit {
     }
 
     calcularMontoPagar(){
-      this.h_facturas.MONTO_SOLICITADO = (this.h_facturas.MONTO_SOLICITADO - this.h_facturas.PAGO_REALIZADO);
-      this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO - this.u_facturas.PAGO_REALIZADO);
+
+      this.h_facturas.CAPITAL = (this.h_facturas.PAGO_REALIZADO - this.h_facturas.INTERES);
+      this.u_facturas.CAPITAL = (this.u_facturas.PAGO_REALIZADO - this.u_facturas.INTERES);
+
+      this.h_facturas.MONTO_SOLICITADO = (this.h_facturas.MONTO_SOLICITADO - this.h_facturas.CAPITAL);
+      this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO - this.u_facturas.CAPITAL);
+
+      this.h_facturas.CUOTAS_MENSUALES = (this.h_facturas.MONTO_SOLICITADO * this.h_facturas.TASA / this.h_facturas.CUOTAS)
+      this.u_facturas.CUOTAS_MENSUALES = (this.u_facturas.MONTO_SOLICITADO * this.u_facturas.TASA / this.u_facturas.CUOTAS)
+    }
+
+    //Nuevo Prestamo
+    onSetData4(select: any){
+      this.h_facturas.FACTURA_ID = select.ID_FACTURAS;
+      this.h_facturas.CLIENTE_ID = select.CLIENTE_ID;
+      this.h_facturas.NOMBRE_APELLIDO = select.NOMBRE_APELLIDO;
+      this.h_facturas.TELEFONO = select.TELEFONO;
+      this.h_facturas.CEDULA = select.CEDULA;
+      this.h_facturas.MONTO_SOLICITADO = select.MONTO_SOLICITADO;
+      this.h_facturas.TASA = select.TASA;
+      this.h_facturas.CUOTAS = select.CUOTAS;
+      this.h_facturas.CUOTAS_MENSUALES = select.CUOTAS_MENSUALES;
+      this.h_facturas.CAPITAL = select.CAPITAL;
+      this.h_facturas.INTERES = select.INTERES;
+      this.h_facturas.FECHA = select.FECHA;
+      //Actualizando factura
+      this.u_facturas.ID_FACTURAS = this.h_facturas.FACTURA_ID;
+      this.u_facturas.CLIENTE_ID = this.h_facturas.CLIENTE_ID;
+      this.u_facturas.NOMBRE_APELLIDO = this.h_facturas.NOMBRE_APELLIDO;
+      this.u_facturas.TELEFONO = this.h_facturas.TELEFONO;
+      this.u_facturas.CEDULA = this.h_facturas.CEDULA;
+      this.u_facturas.MONTO_SOLICITADO = this.h_facturas.MONTO_SOLICITADO;
+      this.u_facturas.TASA = this.h_facturas.TASA;
+      this.u_facturas.CUOTAS = this.h_facturas.CUOTAS;
+      this.u_facturas.CUOTAS_MENSUALES = this.h_facturas.CUOTAS_MENSUALES;
+      this.u_facturas.CAPITAL = this.h_facturas.CAPITAL;
+      this.u_facturas.INTERES = this.h_facturas.INTERES;
+      this.u_facturas.FECHA = this.h_facturas.FECHA;
+    }
+
+    nuevoPrestamo(){
+      this.h_facturas.MONTO_SOLICITADO = (this.h_facturas.MONTO_SOLICITADO + this.h_facturas.PAGO_NUEVO);
+      this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO + this.h_facturas.PAGO_NUEVO);
     }
 
     ObserverChangeSearch3(){
