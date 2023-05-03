@@ -184,7 +184,7 @@ export class ListaClientesComponent implements OnInit {
       this.u_facturas.TASA = this.h_facturas.TASA;
       this.u_facturas.CUOTAS = this.h_facturas.CUOTAS;
       this.u_facturas.CUOTAS_MENSUALES = this.h_facturas.CUOTAS_MENSUALES;
-      this.u_facturas.CAPITAL = this.h_facturas.CAPITAL;
+      this.u_facturas.CAPITAL = (this.h_facturas.MONTO_SOLICITADO / this.h_facturas.CUOTAS);
       this.u_facturas.INTERES = this.h_facturas.INTERES;
       this.u_facturas.FECHA = this.h_facturas.FECHA;
     }
@@ -214,13 +214,23 @@ export class ListaClientesComponent implements OnInit {
     calcularMontoPagar(){
 
       this.h_facturas.CAPITAL = (this.h_facturas.PAGO_REALIZADO - this.h_facturas.INTERES);
-      this.u_facturas.CAPITAL = (this.u_facturas.PAGO_REALIZADO - this.u_facturas.INTERES);
+      //this.u_facturas.CAPITAL = (this.u_facturas.PAGO_REALIZADO - this.u_facturas.INTERES);
 
       this.h_facturas.MONTO_SOLICITADO = (this.h_facturas.MONTO_SOLICITADO - this.h_facturas.CAPITAL);
-      this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO - this.u_facturas.CAPITAL);
+      this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO - this.h_facturas.CAPITAL);
+
+      this.u_facturas.CAPITAL = (this.u_facturas.MONTO_SOLICITADO / this.u_facturas.CUOTAS);
 
       this.h_facturas.CUOTAS_MENSUALES = (this.h_facturas.MONTO_SOLICITADO * this.h_facturas.TASA / this.h_facturas.CUOTAS)
       this.u_facturas.CUOTAS_MENSUALES = (this.u_facturas.MONTO_SOLICITADO * this.u_facturas.TASA / this.u_facturas.CUOTAS)
+
+      this.u_facturas.INTERES = (this.u_facturas.CUOTAS_MENSUALES - this.u_facturas.CAPITAL);
+
+    }
+
+    clearMontoPagar2(){
+      this.u_facturas.PAGO_REALIZADO = 0;
+      this.h_facturas.PAGO_REALIZADO = 0;
     }
 
     //Nuevo Prestamo
@@ -255,6 +265,13 @@ export class ListaClientesComponent implements OnInit {
     nuevoPrestamo(){
       this.h_facturas.MONTO_SOLICITADO = (this.h_facturas.MONTO_SOLICITADO + this.h_facturas.PAGO_NUEVO);
       this.u_facturas.MONTO_SOLICITADO = (this.u_facturas.MONTO_SOLICITADO + this.h_facturas.PAGO_NUEVO);
+
+      this.u_facturas.CUOTAS_MENSUALES = (this.u_facturas.MONTO_SOLICITADO * this.u_facturas.TASA / this.u_facturas.CUOTAS);
+      this.u_facturas.CAPITAL = (this.u_facturas.MONTO_SOLICITADO/this.u_facturas.CUOTAS);
+      this.u_facturas.INTERES = (this.u_facturas.CUOTAS_MENSUALES - this.u_facturas.CAPITAL);
+
+      this.h_facturas.CAPITAL = 0;
+      this.h_facturas.INTERES = 0;
     }
 
     ObserverChangeSearch3(){
